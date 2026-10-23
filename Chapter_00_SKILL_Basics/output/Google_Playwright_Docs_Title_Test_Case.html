@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Playwright end-to-end test case: sign in to Google, search for Playwright, open its official documentation, and verify the page title.">
+  <title>Test Case | Google Search to Playwright Docs</title>
+  <style>
+    :root {
+      --ink: #182b46;
+      --muted: #5c6d82;
+      --blue: #1558a6;
+      --blue-dark: #123b69;
+      --blue-soft: #eaf2fc;
+      --teal: #087f8c;
+      --line: #dbe3ed;
+      --canvas: #edf2f8;
+      --paper: #fff;
+      --amber: #fff4d8;
+      --amber-ink: #795600;
+      --green: #e8f5ee;
+      --green-ink: #17633c;
+      color-scheme: light;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 15px/1.6 "Segoe UI", Arial, sans-serif;
+    }
+    a { color: var(--blue); overflow-wrap: anywhere; }
+    .page {
+      width: min(1080px, calc(100% - 36px));
+      margin: 30px auto;
+      background: var(--paper);
+      box-shadow: 0 12px 40px rgba(24, 43, 70, .10);
+    }
+    header {
+      padding: 48px 58px 42px;
+      background: linear-gradient(125deg, #102b50, #1558a6 68%, #087f8c);
+      color: #fff;
+    }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: #c5defc;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+    .subtitle { margin: 14px 0 22px; color: #e5effb; font-size: 18px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 9px; }
+    .chips span {
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      font-size: 12px;
+      font-weight: 600;
+    }
+    main { padding: 36px 58px 54px; }
+    section { margin: 0 0 34px; }
+    h2 {
+      margin: 0 0 15px;
+      padding-bottom: 9px;
+      border-bottom: 2px solid var(--line);
+      color: var(--blue-dark);
+      font-size: 22px;
+      line-height: 1.25;
+    }
+    h3 { margin: 20px 0 8px; font-size: 16px; }
+    p { margin: 7px 0 12px; }
+    ul, ol { padding-left: 23px; }
+    li { margin: 5px 0; }
+    .notice, .callout {
+      margin: 18px 0;
+      padding: 14px 17px;
+      border-radius: 7px;
+    }
+    .notice {
+      border-left: 4px solid #dfa500;
+      background: var(--amber);
+      color: var(--amber-ink);
+    }
+    .callout {
+      border: 1px solid #c9dced;
+      background: var(--blue-soft);
+    }
+    .notice strong, .callout strong { display: block; margin-bottom: 3px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .card {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+    .card h3 { margin: 0 0 7px; color: var(--blue-dark); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th, td { padding: 11px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th {
+      background: #f1f5fa;
+      color: var(--blue-dark);
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    tr:last-child td { border-bottom: 0; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--green);
+      color: var(--green-ink);
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    pre {
+      overflow-x: auto;
+      margin: 12px 0;
+      padding: 18px;
+      border: 1px solid #263e5d;
+      border-radius: 8px;
+      background: #10233d;
+      color: #edf5ff;
+      font: 12.5px/1.55 Consolas, "Courier New", monospace;
+      tab-size: 2;
+    }
+    code { font-family: Consolas, "Courier New", monospace; }
+    .footer {
+      padding: 18px 58px;
+      border-top: 1px solid var(--line);
+      background: #f8fafd;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    @media (max-width: 680px) {
+      .page { width: 100%; margin: 0; }
+      header { padding: 34px 24px; }
+      main { padding: 28px 24px 40px; }
+      .footer { padding: 18px 24px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+    @page { size: A4; margin: 15mm 13mm; }
+    @media print {
+      body { background: #fff; font-size: 10pt; }
+      .page { width: auto; margin: 0; box-shadow: none; }
+      header { padding: 22mm 15mm 16mm; print-color-adjust: exact; }
+      main { padding: 0 15mm 8mm; }
+      h2, h3 { break-after: avoid; }
+      .card, .notice, .callout, tr, pre { break-inside: avoid; }
+      .table-wrap { overflow: visible; }
+      a { color: inherit; text-decoration: none; }
+      .footer { padding: 12px 15mm; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <p class="eyebrow">Quality Assurance · Playwright E2E</p>
+      <h1>Google Search to Playwright Docs</h1>
+      <p class="subtitle">Sign in to Google, search for Playwright, open the official documentation, and verify its page title.</p>
+      <div class="chips">
+        <span>Test case: TC-GGL-PLW-001</span>
+        <span>Priority: High</span>
+        <span>Type: End-to-end / UI</span>
+        <span>Status: Draft</span>
+      </div>
+    </header>
+
+    <main>
+      <div class="notice">
+        <strong>Account security and automation note</strong>
+        Use an authorized Google test account only. Do not put a password, one-time code, recovery code, or session token in this document or in test source. Complete Google sign-in and any required verification through the approved manual setup, then use a protected Playwright storage-state file for the test. Do not attempt to bypass Google security checks.
+      </div>
+
+      <section id="details">
+        <h2>1. Test case details</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Test case ID</th><td>TC-GGL-PLW-001</td></tr>
+              <tr><th scope="row">Title</th><td>Signed-in Google user can find the Playwright documentation and verify its page title</td></tr>
+              <tr><th scope="row">Objective</th><td>Verify a signed-in user can search Google for Playwright, open the official Playwright documentation introduction page, and confirm the browser document title.</td></tr>
+              <tr><th scope="row">Priority</th><td>High</td></tr>
+              <tr><th scope="row">Test type</th><td>End-to-end, UI, positive path</td></tr>
+              <tr><th scope="row">Suggested automation</th><td>Playwright Test with TypeScript and Page Object Model</td></tr>
+              <tr><th scope="row">Preconditions</th><td>Internet access is available; an authorized Google test account has an active authenticated session; approved browser state is prepared securely; Google Search is accessible.</td></tr>
+              <tr><th scope="row">Test data</th><td>Search query: <code>Playwright official documentation</code>. No personal credentials are test data for this document.</td></tr>
+              <tr><th scope="row">Target destination</th><td><a href="https://playwright.dev/docs/intro">https://playwright.dev/docs/intro</a></td></tr>
+              <tr><th scope="row">Expected document title</th><td><strong>Installation | Playwright</strong> (confirmed from the official docs page on 23 October 2026; revalidate if the site content changes).</td></tr>
+              <tr><th scope="row">Status</th><td><span class="badge">Not executed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="steps">
+        <h2>2. Manual test steps</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Action</th><th>Expected result</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Open Google in a browser and sign in using the authorized test account. Complete any required verification through Google's normal sign-in flow.</td>
+                <td>Google displays the signed-in account indicator. No credentials or verification codes are recorded in test evidence.</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>In Google Search, enter <code>Playwright official documentation</code> and submit the search.</td>
+                <td>Search results are displayed for the Playwright documentation query.</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Open the result whose destination is the official <code>playwright.dev</code> documentation page for Installation / Introduction (<code>/docs/intro</code>).</td>
+                <td>The browser opens the official Playwright documentation page, not an unrelated result or lookalike domain.</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Read the browser tab/document title.</td>
+                <td>The document title is exactly <code>Installation | Playwright</code>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="automation">
+        <h2>3. Playwright automation example</h2>
+        <p>The following is one focused Playwright Test suite. It assumes an authenticated session has been created beforehand through a permitted sign-in and stored at <code>playwright/.auth/google.json</code>. Keep that file out of source control and use a dedicated test account; storage state contains sensitive session data.</p>
+        <pre><code>import { expect, Page, test } from '@playwright/test';
+
+test.use({ storageState: 'playwright/.auth/google.json' });
+
+class GoogleSearchPage {
+  constructor(private readonly page: Page) {}
+
+  async open(): Promise&lt;void&gt; {
+    await this.page.goto('https://www.google.com/');
+  }
+
+  async expectSignedIn(): Promise&lt;void&gt; {
+    await expect(
+      this.page.locator('[aria-label^="Google Account"]')
+    ).toBeVisible();
+  }
+
+  async search(query: string): Promise&lt;void&gt; {
+    const searchBox = this.page.getByRole('combobox', { name: /search/i });
+    await searchBox.fill(query);
+    await searchBox.press('Enter');
+  }
+
+  async openOfficialPlaywrightDocs(): Promise&lt;void&gt; {
+    const result = this.page.locator(
+      'a[href*="playwright.dev/docs/intro"]'
+    ).first();
+    await expect(result).toBeVisible();
+    await result.click();
+  }
+}
+
+class PlaywrightDocsPage {
+  constructor(private readonly page: Page) {}
+
+  async expectOfficialIntroductionPage(): Promise&lt;void&gt; {
+    await expect(this.page).toHaveURL(
+      /^https:\/\/playwright\.dev\/docs\/intro(?:[?#].*)?$/
+    );
+    await expect(this.page).toHaveTitle('Installation | Playwright');
+    await expect(
+      this.page.getByRole('heading', { name: 'Installation', level: 1 })
+    ).toBeVisible();
+  }
+}
+
+test.describe('Google search to official Playwright documentation', () =&gt; {
+  test('TC-GGL-PLW-001: signed-in user finds Playwright docs and verifies the title',
+    async ({ page }) =&gt; {
+      const google = new GoogleSearchPage(page);
+      const docs = new PlaywrightDocsPage(page);
+
+      await google.open();
+      await google.expectSignedIn();
+      await google.search('Playwright official documentation');
+      await google.openOfficialPlaywrightDocs();
+      await docs.expectOfficialIntroductionPage();
+    }
+  );
+});</code></pre>
+        <div class="callout">
+          <strong>Automation setup</strong>
+          Provision the authenticated state locally using the approved account and sign-in process. Protect it as a secret, exclude it from version control, and periodically refresh it when the session expires. Google can change its UI, regional behavior, and search-result markup; review the locators if the page changes. Do not disable account protections to make this test pass.
+        </div>
+        <p class="muted small">The title assertion is the primary acceptance check. The URL and page heading assertions additionally confirm that the opened result is the intended official documentation page.</p>
+      </section>
+
+      <section id="acceptance">
+        <h2>4. Pass / fail criteria</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Pass</h3>
+            <p>The signed-in account indicator is visible, the search is submitted, the official documentation introduction page opens at the expected URL, and its document title equals <code>Installation | Playwright</code>.</p>
+          </article>
+          <article class="card">
+            <h3>Fail / blocked</h3>
+            <p><strong>Fail:</strong> The wrong destination opens, the title differs, or the required page cannot be located after a valid search.</p>
+            <p><strong>Blocked:</strong> The authorized session is unavailable/expired, Google requires a human security challenge, or internet access is unavailable. Resolve through the approved sign-in flow; do not bypass security controls.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="references">
+        <h2>5. Reference</h2>
+        <ul>
+          <li>Official Playwright documentation page used as the title oracle: <a href="https://playwright.dev/docs/intro">https://playwright.dev/docs/intro</a></li>
+          <li>Document title checked: <code>Installation | Playwright</code>.</li>
+          <li>Title verified against the official page on 23 October 2026; re-check the oracle before future executions because website titles can change.</li>
+        </ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      Test case TC-GGL-PLW-001 · Draft · Playwright Test / TypeScript · Credentials and authenticated session data must be handled securely.
+    </footer>
+  </div>
+</body>
+</html>

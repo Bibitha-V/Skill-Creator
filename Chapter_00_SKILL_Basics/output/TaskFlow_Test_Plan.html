@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="QA test plan for the TaskFlow task management web application, based on PRD version 1.0.">
+  <title>TaskFlow | QA Test Plan</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172b4d;
+      --muted: #52647a;
+      --line: #dbe3ee;
+      --paper: #ffffff;
+      --canvas: #eef3f8;
+      --blue: #1456a0;
+      --blue-soft: #eaf2fc;
+      --teal: #087f8c;
+      --amber: #fff4d6;
+      --amber-ink: #805900;
+      --green: #e8f5ee;
+      --green-ink: #17633c;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--canvas);
+      color: var(--ink);
+      font: 15px/1.6 "Segoe UI", Arial, sans-serif;
+    }
+
+    a { color: var(--blue); }
+
+    .page {
+      width: min(1120px, calc(100% - 36px));
+      margin: 30px auto;
+      background: var(--paper);
+      box-shadow: 0 12px 40px rgba(23, 43, 77, .10);
+    }
+
+    .cover {
+      position: relative;
+      overflow: hidden;
+      padding: 56px 64px 48px;
+      background: linear-gradient(125deg, #102b50, #1456a0 65%, #087f8c);
+      color: #fff;
+    }
+
+    .cover::after {
+      position: absolute;
+      right: -100px;
+      bottom: -220px;
+      width: 520px;
+      height: 520px;
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 50%;
+      box-shadow: 0 0 0 44px rgba(255,255,255,.04), 0 0 0 92px rgba(255,255,255,.035);
+      content: "";
+    }
+
+    .eyebrow {
+      margin: 0 0 15px;
+      color: #b9d8ff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 700px;
+      margin: 0;
+      font-size: clamp(38px, 6vw, 62px);
+      line-height: 1.05;
+      letter-spacing: -.035em;
+    }
+
+    .subtitle {
+      max-width: 660px;
+      margin: 18px 0 30px;
+      color: #e2edfb;
+      font-size: 19px;
+    }
+
+    .cover-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .cover-meta span {
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .document-body { padding: 0 64px 64px; }
+
+    .notice {
+      margin: 28px 0 26px;
+      padding: 14px 18px;
+      border-left: 4px solid #e0a400;
+      background: var(--amber);
+      color: var(--amber-ink);
+    }
+
+    .notice strong { display: block; margin-bottom: 3px; }
+
+    nav {
+      margin: 24px 0 42px;
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fafd;
+    }
+
+    nav h2 { margin: 0 0 12px; font-size: 16px; }
+
+    nav ol {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px 24px;
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    nav li { padding: 2px 0; }
+
+    section {
+      margin: 0 0 42px;
+      scroll-margin-top: 20px;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--line);
+      color: #123c70;
+      font-size: 25px;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      color: var(--ink);
+      font-size: 17px;
+    }
+
+    p { margin: 8px 0 12px; }
+
+    .lead { color: #344b68; font-size: 17px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: #fff;
+    }
+
+    .card h3 { margin: 0 0 7px; }
+    .card p:last-child, .card ul:last-child { margin-bottom: 0; }
+
+    .callout {
+      margin: 16px 0;
+      padding: 15px 18px;
+      border: 1px solid #c9dced;
+      border-radius: 8px;
+      background: var(--blue-soft);
+    }
+
+    .callout strong { color: #123c70; }
+
+    ul, ol { padding-left: 23px; }
+    li { margin: 4px 0; }
+
+    .compact li { margin: 2px 0; }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 14px 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 11px 13px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th {
+      background: #f1f5fa;
+      color: #173b67;
+      font-size: 12px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #174f8e;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.tbd { background: var(--amber); color: var(--amber-ink); }
+    .badge.confirmed { background: var(--green); color: var(--green-ink); }
+
+    .metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .metric strong { color: #123c70; font-size: 22px; white-space: nowrap; }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+
+    .phase {
+      padding: 16px 18px;
+      border-left: 3px solid var(--teal);
+      background: #f6fafb;
+    }
+
+    .phase + .phase { margin-top: 10px; }
+    .phase h3 { margin: 0 0 5px; }
+
+    .footer {
+      padding: 22px 64px;
+      border-top: 1px solid var(--line);
+      background: #f8fafd;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .page { width: 100%; margin: 0; }
+      .cover { padding: 42px 25px 36px; }
+      .document-body { padding: 0 25px 40px; }
+      .footer { padding: 20px 25px; }
+      nav ol, .grid { grid-template-columns: 1fr; }
+      h2 { font-size: 22px; }
+    }
+
+    @page { size: A4; margin: 16mm 14mm; }
+
+    @media print {
+      body { background: #fff; font-size: 10pt; }
+      .page { width: auto; margin: 0; box-shadow: none; }
+      .cover { padding: 32mm 18mm 22mm; print-color-adjust: exact; }
+      .cover::after { display: none; }
+      .document-body { padding: 0 18mm 8mm; }
+      nav { break-inside: avoid; }
+      section { break-inside: auto; }
+      h2, h3 { break-after: avoid; }
+      .card, .callout, .phase, tr { break-inside: avoid; }
+      .table-wrap { overflow: visible; }
+      a { color: inherit; text-decoration: none; }
+      .footer { padding: 12px 18mm; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="cover">
+      <p class="eyebrow">Quality Assurance · Test Plan</p>
+      <h1>TaskFlow</h1>
+      <p class="subtitle">Test plan for the task management web application</p>
+      <div class="cover-meta">
+        <span>Plan version 1.0</span>
+        <span>Status: Draft</span>
+        <span>Source PRD: Version 1.0 · Draft</span>
+        <span>Prepared: 23 October 2026</span>
+      </div>
+    </header>
+
+    <div class="document-body">
+      <div class="notice">
+        <strong>Planning note — requirements are still draft</strong>
+        This plan is based only on the supplied TaskFlow PRD. The PRD identifies several sample targets that require validation, and leaves environment URLs, test dates, ownership details, and some product behavior open. Such items are marked TBD or listed for confirmation; they are not assumed.
+      </div>
+
+      <nav aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ol>
+          <li><a href="#objective">Objective</a></li>
+          <li><a href="#scope">Scope</a></li>
+          <li><a href="#inclusions">Inclusions &amp; coverage</a></li>
+          <li><a href="#environments">Test environments &amp; data</a></li>
+          <li><a href="#defects">Defect reporting</a></li>
+          <li><a href="#strategy">Test strategy</a></li>
+          <li><a href="#schedule">Test schedule</a></li>
+          <li><a href="#deliverables">Test deliverables</a></li>
+          <li><a href="#criteria">Entry &amp; exit criteria</a></li>
+          <li><a href="#execution">Test execution</a></li>
+          <li><a href="#closure">Test closure</a></li>
+          <li><a href="#tools">Tools</a></li>
+          <li><a href="#risks">Risks &amp; mitigations</a></li>
+          <li><a href="#approvals">Approvals</a></li>
+          <li><a href="#traceability">Requirement coverage</a></li>
+          <li><a href="#open-questions">Open questions</a></li>
+        </ol>
+      </nav>
+
+      <section id="objective">
+        <h2>1. Objective</h2>
+        <p class="lead">Validate that TaskFlow lets individual users register, authenticate, manage and organize their tasks while protecting user data and meeting the performance and reliability expectations that are agreed for release.</p>
+        <p>Testing will verify the functional requirements FR-01 through FR-07, the stated non-functional requirements, the API response examples and the QA expectations in PRD version 1.0. The product is a web application for personal task management; team collaboration, notifications, attachments, calendar integration, third-party login, AI recommendations and mobile applications are explicitly out of scope.</p>
+      </section>
+
+      <section id="scope">
+        <h2>2. Scope</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>In scope</h3>
+            <ul class="compact">
+              <li>User registration, login, logout, validation, and protected access.</li>
+              <li>Task create, list, retrieve, update, and delete behavior.</li>
+              <li>Task title, description, priority, status, due date, ownership, and filters.</li>
+              <li>Input validation, error responses, user-level authorization, and data isolation.</li>
+              <li>API, UI, unit, integration, functional, negative, security-control, performance, smoke, and regression testing.</li>
+              <li>Database persistence and API response/schema checks, as defined by the final contracts.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Out of scope</h3>
+            <ul class="compact">
+              <li>Team collaboration and assigning tasks to other users.</li>
+              <li>Email/SMS notifications, file attachments, and calendar integration.</li>
+              <li>Third-party login, AI recommendations, and native mobile applications.</li>
+              <li>Unspecified features such as password reset, recurring schedules, task archiving, and deletion retention policy until requirements are decided.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="inclusions">
+        <h2>3. Inclusions &amp; coverage</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Area</th><th>Planned verification</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>Registration</td><td>Valid account creation; required name, email and password validation; malformed email; duplicate email; password policy; password hashing at rest.</td><td>FR-01</td></tr>
+              <tr><td>Authentication</td><td>Valid and invalid credentials; missing credentials; authenticated and unauthenticated access; logout invalidation according to the approved session/token design; prevent access to another user's data.</td><td>FR-02</td></tr>
+              <tr><td>Create task</td><td>Valid task creation; title required and 3–100 characters; description optional and up to 1,000 characters; accepted priorities Low, Medium, High; ownership cannot be forged in request data.</td><td>FR-03</td></tr>
+              <tr><td>View tasks</td><td>List and retrieve tasks; title, priority, status and due date; consistent ordering; empty state; ownership isolation; invalid pagination handling once contract behavior is defined.</td><td>FR-04</td></tr>
+              <tr><td>Update task</td><td>Valid/invalid field updates; supported statuses Pending, In Progress, Completed; nonexistent task response; ownership check; persisted values shown on retrieval.</td><td>FR-05</td></tr>
+              <tr><td>Delete task</td><td>Authorized deletion; nonexistent task response; ownership check; deleted task removed from active list and unavailable through normal task API.</td><td>FR-06</td></tr>
+              <tr><td>Filter tasks</td><td>Status and priority filters; due-date filter; combined filters match all conditions; invalid filter values rejected; no cross-user disclosure.</td><td>FR-07</td></tr>
+              <tr><td>Validation &amp; errors</td><td>Malformed JSON, missing fields, boundary values, invalid types/enums, consistent error format and appropriate status codes against the finalized API contract.</td><td>FR-01–FR-07; API requirements</td></tr>
+              <tr><td>Security</td><td>Server-side validation, HTTPS for production traffic, authentication and authorization enforcement, secure password storage, secrets handling, and sensitive-log review.</td><td>NFR 6.2</td></tr>
+              <tr><td>Performance &amp; reliability</td><td>Measure agreed API p95 target under defined load; expected concurrency; graceful/consistent errors; operational error logging; atomic database operations where applicable.</td><td>NFR 6.1, 6.3</td></tr>
+              <tr><td>Automation &amp; regression</td><td>Unit, integration, API, UI, and regression suites; verify pipeline checks as the deployment approach is finalized.</td><td>QA requirements; proposed architecture</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout"><strong>Scope boundary:</strong> The proposed React, Node.js/TypeScript, AWS Lambda, PostgreSQL, Zod, CloudFormation, and Jenkins architecture is a sample proposal, not a mandatory product requirement. Test implementation details should be aligned after the technical design is approved.</div>
+      </section>
+
+      <section id="environments">
+        <h2>4. Test environments &amp; data</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Environment / item</th><th>Plan</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>QA / test environment</td><td>Use a deployed TaskFlow environment with required APIs, UI, database, and authentication integration available. Base URL and access details are not specified.</td><td><span class="badge tbd">TBD</span></td></tr>
+              <tr><td>Staging</td><td>Release plan calls for deployment to staging, smoke testing, and release approval. URL, data policy, and access are not specified.</td><td><span class="badge tbd">TBD</span></td></tr>
+              <tr><td>Production</td><td>Production verification is limited to approved release/deployment checks and monitoring; production test permissions and data safeguards must be agreed.</td><td><span class="badge tbd">TBD</span></td></tr>
+              <tr><td>Platform</td><td>Target is a web application. Supported browser names/versions, operating systems, devices, and viewport matrix are not defined in the PRD.</td><td><span class="badge tbd">Confirm</span></td></tr>
+              <tr><td>Test accounts</td><td>Prepare distinct users to validate ownership boundaries, account registration/login, empty lists, and task isolation. Use approved non-production data.</td><td><span class="badge">Required</span></td></tr>
+              <tr><td>Task data</td><td>Include valid and boundary task titles (3 and 100 characters), optional description through 1,000 characters, supported and unsupported priority/status values, due dates, and tasks for separate owners.</td><td><span class="badge">Required</span></td></tr>
+              <tr><td>Load profile</td><td>Expected concurrent users, request volumes, test duration, and workload mix are not given; define and approve before performance execution.</td><td><span class="badge tbd">TBD</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="defects">
+        <h2>5. Defect reporting procedure</h2>
+        <ol>
+          <li>Record each observed deviation from the approved PRD, acceptance criteria, or finalized API/UI contract with a concise title, affected requirement, environment/build, preconditions, exact reproduction steps, expected and actual results, and supporting evidence where safe.</li>
+          <li>Include request/response details for API issues, excluding credentials, tokens, secrets, and sensitive user data. For data-related issues, describe the test record without exposing real personal information.</li>
+          <li>Classify severity and priority using the project’s agreed defect taxonomy. The taxonomy, tracking system, triage attendees, response targets, and escalation path are not specified and remain TBD.</li>
+          <li>Track status through triage, fix, retest, and closure. Link the defect to its requirement/test and add a regression check for confirmed fixes where appropriate.</li>
+          <li>Communicate the execution summary, open defects, blocked coverage, and release-impacting risks to the designated QA and project stakeholders.</li>
+        </ol>
+        <p class="muted small"><strong>Tracking tool and roles:</strong> TBD. The PRD does not name a defect-management tool or defect owners.</p>
+      </section>
+
+      <section id="strategy">
+        <h2>6. Test strategy</h2>
+        <h3>6.1 Test levels and types</h3>
+        <ul>
+          <li><strong>Unit:</strong> Verify focused validation, business rules, and service logic as implemented.</li>
+          <li><strong>Integration:</strong> Verify interactions among authentication, task APIs, persistence, and database constraints.</li>
+          <li><strong>API:</strong> Verify endpoints, access controls, request validation, status codes, response schemas, filtering, and persisted changes.</li>
+          <li><strong>UI:</strong> Verify core user journeys and visible task states on the agreed web/browser matrix.</li>
+          <li><strong>Functional and negative:</strong> Cover acceptance criteria, invalid/missing input, unauthenticated requests, cross-user access, nonexistent records, malformed JSON, and boundary values.</li>
+          <li><strong>Security controls:</strong> Verify the explicit PRD controls before release. Detailed security test scope and authorization/session contract must be agreed.</li>
+          <li><strong>Performance:</strong> Measure API response-time target and concurrency after the workload profile and infrastructure are agreed.</li>
+          <li><strong>Smoke, sanity, retest, and regression:</strong> Run smoke checks on each candidate build, retest fixes, and run the agreed regression suite before release.</li>
+        </ul>
+
+        <h3>6.2 Test design</h3>
+        <p>Use equivalence partitioning and boundary value analysis for field constraints and pagination; decision tables for combined status/priority/due-date filters and authorization outcomes; state-transition checks for task statuses and authentication/logout behavior; use-case and exploratory testing for end-to-end user workflows and error handling. These are test design approaches, not additional product requirements.</p>
+
+        <h3>6.3 End-to-end flows</h3>
+        <ol>
+          <li>Register a user, log in, create a task, view it, update fields/status, filter it, delete it, and verify it is absent from the active list.</li>
+          <li>Authenticate as one user and attempt to access, change, or delete another user's task; verify no unauthorized data exposure or mutation.</li>
+          <li>Exercise a new user with no tasks and verify the defined empty state.</li>
+          <li>Submit invalid registration, login, task, filter, pagination, and malformed request data; verify the finalized error contract.</li>
+        </ol>
+
+        <h3>6.4 Success measures</h3>
+        <div class="grid">
+          <div class="card"><div class="metric"><span>Successful registration</span><strong>≥95%</strong></div><p class="muted small">Proposed sample target; validate the denominator, measurement window, and infrastructure before sign-off.</p></div>
+          <div class="card"><div class="metric"><span>Successful task creation</span><strong>≥98%</strong></div><p class="muted small">Proposed sample target; validate against agreed test data and load conditions.</p></div>
+          <div class="card"><div class="metric"><span>API response time</span><strong>&lt;500 ms</strong></div><p class="muted small">95th percentile under the agreed test load. Load profile and measurement method are TBD.</p></div>
+          <div class="card"><div class="metric"><span>Application availability</span><strong>99.5%</strong></div><p class="muted small">Monthly target; operational measurement and monitoring source are TBD.</p></div>
+        </div>
+        <p class="muted small">The PRD also sets a release goal of zero known critical security issues. Registration/task creation and performance targets are explicitly described as proposed sample targets requiring validation.</p>
+      </section>
+
+      <section id="schedule">
+        <h2>7. Test schedule</h2>
+        <p>The PRD defines planning/design, development, testing, and deployment phases, but provides no calendar dates, sprint duration, or task estimates. Dates and owners are therefore TBD.</p>
+        <div class="phase">
+          <h3>Phase 1 · Planning and design</h3>
+          <p>Review/finalize requirements and API contracts; agree acceptance criteria, database schema, environment access, test data, and unresolved policy decisions. QA prepares this plan and derives scenarios.</p>
+          <span class="badge tbd">Dates: TBD</span>
+        </div>
+        <div class="phase">
+          <h3>Phase 2 · Development</h3>
+          <p>Development work proceeds; QA performs shift-left review of requirements and testability. Test automation and integration points are aligned with the approved design.</p>
+          <span class="badge tbd">Dates: TBD</span>
+        </div>
+        <div class="phase">
+          <h3>Phase 3 · Testing</h3>
+          <p>Run smoke, functional, API, integration, UI, negative, security-control, performance, retest, and regression activities as the required build and dependencies become available.</p>
+          <span class="badge tbd">Dates: TBD</span>
+        </div>
+        <div class="phase">
+          <h3>Phase 4 · Deployment</h3>
+          <p>Deploy to staging, complete smoke testing, obtain release approval, deploy to production, and monitor after release.</p>
+          <span class="badge tbd">Dates: TBD</span>
+        </div>
+        <p class="muted small">Test cycle duration, execution resource allocation, reporting cadence, and release cutoff are to be agreed with the project team.</p>
+      </section>
+
+      <section id="deliverables">
+        <h2>8. Test deliverables</h2>
+        <ul>
+          <li>This test plan and its approved revisions.</li>
+          <li>Requirement-linked test scenarios and test cases (including API/UI automation candidates).</li>
+          <li>Test data and environment readiness notes, without secrets or sensitive data.</li>
+          <li>Automation results for unit, integration, API, UI, and regression tests as available.</li>
+          <li>Defect records, retest outcomes, and traceability updates.</li>
+          <li>Per-cycle execution summary: pass/fail/blocked counts, coverage, defects by agreed severity, risks, and open questions.</li>
+          <li>Final test summary and QA release recommendation.</li>
+        </ul>
+      </section>
+
+      <section id="criteria">
+        <h2>9. Entry &amp; exit criteria</h2>
+        <div class="grid">
+          <article class="card">
+            <h3>Test planning / design entry</h3>
+            <ul class="compact">
+              <li>Requirements and acceptance criteria are available for review.</li>
+              <li>Product, technical, and QA stakeholders can clarify open questions.</li>
+            </ul>
+            <h3>Exit</h3>
+            <ul class="compact">
+              <li>Requirements are reviewed and understood; testable criteria and unresolved decisions are documented.</li>
+              <li>Test scenarios, coverage, and dependencies are reviewed.</li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Test execution entry</h3>
+            <ul class="compact">
+              <li>Requirements reviewed; environment available; required APIs deployed; test data available.</li>
+              <li>Test scenarios/cases are reviewed or signed off as required by the project.</li>
+              <li>Initial build passes smoke testing.</li>
+            </ul>
+            <h3>Exit</h3>
+            <ul class="compact">
+              <li>All critical test cases pass.</li>
+              <li>No unresolved critical or high-severity defects remain according to the approved release policy.</li>
+              <li>Agreed regression tests pass; API performance targets are met.</li>
+              <li>Results are documented and QA provides a release recommendation.</li>
+            </ul>
+          </article>
+        </div>
+        <p class="muted small">The PRD contains the entry/exit conditions above. The “high severity” threshold and the project release policy must be formally agreed; otherwise this gate cannot be assessed consistently.</p>
+      </section>
+
+      <section id="execution">
+        <h2>10. Test execution</h2>
+        <ol>
+          <li>Confirm the build, deployment, requirements baseline, API contract, environment, test accounts, and test data.</li>
+          <li>Run smoke tests for registration/login, protected access, core task creation/retrieval, and service availability. If smoke testing fails, record blockers and defer broad execution until a stable build is available.</li>
+          <li>Execute prioritized functional and negative cases across the FR-01 to FR-07 coverage matrix; record results against the requirement and build.</li>
+          <li>Run integration, security-control, performance, UI, and regression checks when dependencies, approved scope, and environment are ready.</li>
+          <li>Log defects, retest fixes, run impacted regression checks, and communicate status and risk to stakeholders.</li>
+          <li>Repeat test cycles until exit criteria are met or a release decision is made with documented risk acceptance.</li>
+        </ol>
+        <div class="callout"><strong>Performance gate:</strong> Do not report a pass/fail against the 500 ms p95 target until the agreed load profile, environment capacity, measurement window, and response-time sampling approach have been documented.</div>
+      </section>
+
+      <section id="closure">
+        <h2>11. Test closure</h2>
+        <h3>Closure entry</h3>
+        <ul class="compact">
+          <li>Execution results, defect status, regression results, and performance results (when applicable) are available.</li>
+          <li>Release criteria and any residual risks are reviewed with stakeholders.</li>
+        </ul>
+        <h3>Closure exit</h3>
+        <ul class="compact">
+          <li>Test summary report and QA release recommendation are delivered.</li>
+          <li>Coverage, blocked tests, unresolved defects, and accepted risks are documented.</li>
+          <li>Required approvals are recorded before the next release phase.</li>
+        </ul>
+      </section>
+
+      <section id="tools">
+        <h2>12. Tools</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Purpose</th><th>Tool / approach identified in PRD</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>API testing</td><td>Postman or Playwright API testing</td><td>Choose and confirm project standard.</td></tr>
+              <tr><td>UI automation</td><td>Playwright with JavaScript/TypeScript</td><td>Named as proposed architecture; confirm with implementation design.</td></tr>
+              <tr><td>CI/CD</td><td>Jenkins</td><td>Named in proposed architecture; pipeline availability and gates to confirm.</td></tr>
+              <tr><td>Defect tracking</td><td>TBD</td><td>No defect tracking product is specified in the PRD.</td></tr>
+              <tr><td>Reporting / evidence</td><td>TBD</td><td>Agree storage and reporting location before execution.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="risks">
+        <h2>13. Risks &amp; mitigations</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Risk</th><th>Impact</th><th>Mitigation / response</th></tr></thead>
+            <tbody>
+              <tr><td>Database connection failures</td><td>Users cannot manage tasks.</td><td>Verify connection behavior, timeouts, monitoring, and approved retry policies; these operational controls require implementation confirmation.</td></tr>
+              <tr><td>Unauthorized data access</td><td>User data exposure.</td><td>Test ownership checks across list, retrieve, update, delete, and request manipulation scenarios.</td></tr>
+              <tr><td>Slow API responses</td><td>Poor user experience and unmet performance goal.</td><td>Agree load profile; measure p95; investigate query and service behavior; PRD notes appropriate indexes for common task queries.</td></tr>
+              <tr><td>Incomplete validation</td><td>Invalid or inconsistent data.</td><td>Test server-side validation, boundaries, enums, malformed input, and consistent error responses.</td></tr>
+              <tr><td>Deployment failures</td><td>Service interruption.</td><td>Verify deployment pipeline checks, staging smoke tests, and rollback procedures before release.</td></tr>
+              <tr><td>Unresolved PRD open questions</td><td>Ambiguous expected behavior and blocked or inconsistent test decisions.</td><td>Resolve authentication/token policy, pagination, deletion behavior, notifications, recurring tasks, archive behavior, and expected load before the affected coverage or release gate.</td></tr>
+              <tr><td>Environment, API, or test-data unavailable</td><td>Testing delayed or coverage blocked.</td><td>Track readiness as a dependency; identify blocked tests and resume once access, deployment, and safe test data are available.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="approvals">
+        <h2>14. Approvals</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Role</th><th>Name</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+              <tr><td>Product Owner</td><td>TBD</td><td>Pending</td><td>TBD</td></tr>
+              <tr><td>Technical Lead</td><td>TBD</td><td>Pending</td><td>TBD</td></tr>
+              <tr><td>QA Lead</td><td>TBD</td><td>Pending</td><td>TBD</td></tr>
+              <tr><td>Project Manager</td><td>TBD</td><td>Pending</td><td>TBD</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Approval of this plan confirms the scope, test approach, environment and release gates. The PRD lists these approver roles with names TBD and approval status Pending.</p>
+      </section>
+
+      <section id="traceability">
+        <h2>15. Requirement coverage map</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Requirement</th><th>Primary test coverage</th><th>Priority</th></tr></thead>
+            <tbody>
+              <tr><td>FR-01 User Registration</td><td>Valid/invalid registration, uniqueness, required fields, email/password rules, secure password storage.</td><td>High — core account entry</td></tr>
+              <tr><td>FR-02 User Login</td><td>Credential checks, missing inputs, protected API access, logout invalidation, cross-user access control.</td><td>High — access control</td></tr>
+              <tr><td>FR-03 Create Task</td><td>Valid creation, title/description boundaries, priority enum, owner association and request tampering.</td><td>High — core task flow</td></tr>
+              <tr><td>FR-04 View Tasks</td><td>List/detail data, ordering, empty state, ownership isolation, pagination validation.</td><td>High — core task flow</td></tr>
+              <tr><td>FR-05 Update Task</td><td>Allowed fields/statuses, invalid values, nonexistent ID, ownership, persisted update.</td><td>High — core task flow</td></tr>
+              <tr><td>FR-06 Delete Task</td><td>Authorized delete, nonexistent ID, ownership, active-list removal, normal API retrieval after delete.</td><td>High — core task flow</td></tr>
+              <tr><td>FR-07 Filter Tasks</td><td>Status, priority, due date, combined conditions, invalid filters, owner isolation.</td><td>High — task organization</td></tr>
+              <tr><td>NFR 6.1 Performance</td><td>p95 response time under agreed test load and expected concurrent users.</td><td>High — target needs validation</td></tr>
+              <tr><td>NFR 6.2 Security</td><td>Password storage, HTTPS, authentication/authorization, server-side validation, secrets, sensitive logs.</td><td>High — release control</td></tr>
+              <tr><td>NFR 6.3 Reliability / maintainability</td><td>Consistent errors, relevant operational logs, atomicity where applicable, automated test and review evidence.</td><td>Medium / High — finalize release interpretation</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="muted small">Priorities above reflect the PRD’s High product priority, core user goals, and stated release/security gates; no separate project severity or test prioritization scale is supplied.</p>
+      </section>
+
+      <section id="open-questions">
+        <h2>16. Open questions &amp; decisions needed</h2>
+        <p>Resolve these PRD questions before finalizing test cases, API expectations, or release gates:</p>
+        <ul>
+          <li>Should password reset be supported?</li>
+          <li>Should tasks support recurring schedules or completed-task archiving?</li>
+          <li>Should due-date notifications be supported? (Notifications are otherwise listed as out of scope.)</li>
+          <li>Should task lists support pagination, and what are the accepted pagination parameters and invalid-parameter behavior?</li>
+          <li>Should deletion be soft or permanent?</li>
+          <li>What are expected concurrent users and request volumes?</li>
+          <li>What are the exact authentication and token-expiration policies, including logout invalidation?</li>
+          <li>What are the final API schemas, error codes, and authentication behavior?</li>
+          <li>Which QA/staging environments, supported browsers/versions, dates, and defect-management/reporting tools will be used?</li>
+          <li>How will sample success/availability/performance targets be measured and accepted?</li>
+        </ul>
+        <div class="callout"><strong>Release dependency:</strong> Until these decisions are recorded, affected test expectations remain conditional and should not be silently treated as settled acceptance criteria.</div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      TaskFlow QA Test Plan · Based on “TaskFlow — Task Management Application” PRD, version 1.0, status Draft. This plan is a working document pending stakeholder review and approval.
+    </footer>
+  </main>
+</body>
+</html>
